@@ -62,58 +62,84 @@ export default function Shop() {
 
     for (let i = 0; i < cart.length; i++) total += cart[i].price;
 
-    function addProduct(){
+    function addProduct() {
         const data = {
-            name : name_ref.current.value,
-            price : price_ref.current.value ,
-           img : img_ref.current.value,
+            name: name_ref.current.value,
+            price: price_ref.current.value,
+            img: img_ref.current.value,
         }
-        axios.post(URL+"/api/addproduct",data).then((response) => {
-            if(response.data.status=="ok") alert("Add product sucessfully");
+        axios.post(URL + "/api/addproduct", data).then((response) => {
+            if (response.data.status == "ok") alert("Add product sucessfully");
             setProducts(response.data.products);
         })
         // alert(name_ref.current.value);
     }
 
-    function delProduct(id){
+    function delProduct(id) {
         // event.stopPropogation
-        axios.delete(URL+"/api/delproduct"+id)
-        .then((response) => {
-            if(response.data.status=="ok") alert("Delete product sucessfully");
-            setProducts(response.data.products);
-        })
-        .catch(error=>{
-            console.log("error")
-        });
+        axios.delete(URL + "/api/delproduct/" + id)
+            .then((response) => {
+                if (response.data.status == "ok") alert("Delete product sucessfully");
+                setProducts(response.data.products);
+            })
+            .catch(error => {
+                console.log("error")
+            });
     }
 
-    function updateProductFrom(item){
-        id = item.id;
+    // function updateProductFrom(item){
+    //     id = item.id;
+    //     name_ref.current.value = item.name;
+    //     price_ref.current.value = item.price;
+    //     img_ref.current.value = item.img;
+    // }
+
+    // function updateProduct(){
+    //     const data = {
+    //         name : name_ref.current.value,
+    //         price : price_ref.current.value,
+    //         img : img_ref.current.value
+    //     };
+    //     if (!id) alert ("no id")
+    //     axios.put(URL+"/api/updateproduct/"+id,data)
+    //     .then((response) => {
+    //         if(response.data.status=="ok") alert("Update product sucessfully");
+    //         setProducts(response.data.products);
+    //     })
+    //     .catch(error=>{
+    //         console.log("error")
+    //     });
+    // }
+
+    const [productId, setProductId] = useState(null);
+
+    function updateProductFrom(item) {
+        setProductId(item.id);
         name_ref.current.value = item.name;
         price_ref.current.value = item.price;
         img_ref.current.value = item.img;
     }
 
-    function updateProduct(){
+    function updateProduct() {
+        if (!productId) return alert("No product id selected");
         const data = {
-            name : name_ref.current.value,
-            price : price_ref.current.value,
-            img : img_ref.current.value
+            name: name_ref.current.value,
+            price: price_ref.current.value,
+            img: img_ref.current.value
         };
-        if (!id) alert ("no id")
-        axios.put(URL+"/api/updateproduct"+id,data)
-        .then((response) => {
-            if(response.data.status=="ok") alert("Update product sucessfully");
-            setProducts(response.data.products);
-        })
-        .catch(error=>{
-            console.log("error")
-        });
+        axios.put(`${URL}/api/updateproduct/${productId}`, data)
+            .then((response) => {
+                if (response.data.status === "ok") alert("Update product successfully");
+                setProducts(response.data.products);
+            })
+            .catch(error => {
+                console.log("error");
+            });
     }
 
     return (<>
         name : <input type='text' ref={name_ref} />
-        price : <input type='text'ref={price_ref} />
+        price : <input type='text' ref={price_ref} />
         img : <input type='text' ref={img_ref} />
         <button onClick={addProduct}>add</button>
         <button onClick={updateProduct}>update</button>
